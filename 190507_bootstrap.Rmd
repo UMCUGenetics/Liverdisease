@@ -28,7 +28,8 @@ library(ggplot2)
 library(reshape2)
 
 #2 Define directories
-dir = ""
+dir = "~/surfdrive/Shared/Liver/"
+indir = paste(dir,"Data/",sep = "")
 outdir = paste(dir,"Results/SNV/",sep = "")
 
 # Read mutational profiles
@@ -263,16 +264,20 @@ sig_contr_distance_permutations = function(replicas_matrix, n_samples, signature
 ```{r include = F}
 
 # ----- Read COSMIC mutational signatures ------
-sp_url <- paste("http://cancer.sanger.ac.uk/cancergenome/assets/", "signatures_probabilities.txt", sep = "")
-cancer_signatures = read.table(sp_url, sep = "\t", header = TRUE)
+#1A v2 (downloaded march 13th, 2018)
+cancer_signatures_v2 = read.table(paste(indir,"SNV/cancersignaturesv2.txt",sep=""), sep="\t")
+#1B v3 (downloaded may 22nd, 2019)
+cancer_signatures_v3 = read.csv(paste(indir,"SNV/cancersignaturesv3.csv",sep=""))
 # Match the order of the mutation types to MutationalPatterns standard
-new_order = match(TRIPLETS_96, cancer_signatures$Somatic.Mutation.Type)
+new_order = match(TRIPLETS_96, cancer_signatures_v2$Somatic.Mutation.Type)
 # Reorder cancer signatures dataframe
-cancer_signatures = cancer_signatures[as.vector(new_order),]
+cancer_signatures_v2 = cancer_signatures_v2[as.vector(new_order),]
 # Add trinucletiode changes names as row.names
-row.names(cancer_signatures) = cancer_signatures$Somatic.Mutation.Type
+row.names(cancer_signatures_v2) = cancer_signatures_v2$Somatic.Mutation.Type
+row.names(cancer_signatures_v3) = paste(paste(substring(cancer_signatures_v3$SubType,1,1),cancer_signatures_v3$Type,sep="["),substring(cancer_signatures_v3$SubType,3,3),sep="]")
 # Keep only 96 contributions of the signatures in matrix
-cancer_signatures = as.matrix(cancer_signatures[,4:33])
+cancer_signatures_v2 = as.matrix(cancer_signatures_v2[,4:33])
+cancer_signatures_v3 = as.matrix(cancer_signatures_v3[,3:ncol(cancer_signatures_v3)])
 ```
 
 \newpage
@@ -280,24 +285,44 @@ cancer_signatures = as.matrix(cancer_signatures[,4:33])
 ```{r echo = F}
 
 # Calculate signature contributions of centroids
-sig_contr_30_WT_liver = fit_to_signatures(as.matrix(centroid(mut_mat_WT_liver)), cancer_signatures)$contribution
-sig_contr_30_ALC_liver = fit_to_signatures(as.matrix(centroid(mut_mat_ALC_liver)), cancer_signatures)$contribution
+#v2
+sig_contr_30_WT_liver_v2 = fit_to_signatures(as.matrix(centroid(mut_mat_WT_liver)), cancer_signatures_v2)$contribution
+sig_contr_30_ALC_liver_v2 = fit_to_signatures(as.matrix(centroid(mut_mat_ALC_liver)), cancer_signatures_v2)$contribution
+#v3
+sig_contr_30_WT_liver_v3 = fit_to_signatures(as.matrix(centroid(mut_mat_WT_liver)), cancer_signatures_v3)$contribution
+sig_contr_30_ALC_liver_v3 = fit_to_signatures(as.matrix(centroid(mut_mat_ALC_liver)), cancer_signatures_v3)$contribution
 
 # Normalize signature contributions
-sig_contr_30_WT_liver_norm = prop.table(sig_contr_30_WT_liver,2)
-sig_contr_30_ALC_liver_norm = prop.table(sig_contr_30_ALC_liver,2)
+#v2
+sig_contr_30_WT_liver_norm_v2 = prop.table(sig_contr_30_WT_liver_v2,2)
+sig_contr_30_ALC_liver_norm_v2 = prop.table(sig_contr_30_ALC_liver_v2,2)
+#v3
+sig_contr_30_WT_liver_norm_v3 = prop.table(sig_contr_30_WT_liver_v3,2)
+sig_contr_30_ALC_liver_norm_v3 = prop.table(sig_contr_30_ALC_liver_v3,2)
 
 # Plot signature contribution of WT liver & ALC liver
-df = cbind(sig_contr_30_WT_liver, sig_contr_30_ALC_liver)
-colnames(df) = c("Healthy", "Alcoholic")
-plot_contribution(df, coord_flip = TRUE) + ggtitle("Signature contributions liver")
-plot_contribution_heatmap(df, cluster_samples = F) + ggtitle("Signature contributions liver")
+#v2
+df_v2 = cbind(sig_contr_30_WT_liver_v2, sig_contr_30_ALC_liver_v2)
+colnames(df_v2) = c("Healthy", "Alcoholic")
+plot_contribution(df_v2, coord_flip = TRUE) + ggtitle("Signature contributions liver (v2)")
+plot_contribution_heatmap(df_v2, cluster_samples = F) + ggtitle("Signature contributions liver (v2)")
+#v3
+df_v3 = cbind(sig_contr_30_WT_liver_v3, sig_contr_30_ALC_liver_v3)
+colnames(df_v3) = c("Healthy", "Alcoholic")
+plot_contribution(df_v3, coord_flip = TRUE) + ggtitle("Signature contributions liver (v3)")
+plot_contribution_heatmap(df_v3, cluster_samples = F) + ggtitle("Signature contributions liver (v3)")
 
 # Calculate euclidean distance between signature contributions of WT liver & ALC liver
-euc_dist_contr_WT_ALC_liver = dist(rbind(t(sig_contr_30_WT_liver_norm), t(sig_contr_30_ALC_liver_norm))) # 0.07878797
+#v2
+euc_dist_contr_WT_ALC_liver_v2 = dist(rbind(t(sig_contr_30_WT_liver_norm_v2), t(sig_contr_30_ALC_liver_norm_v2))) # 0.07878797
+#v3
+euc_dist_contr_WT_ALC_liver_v3 = dist(rbind(t(sig_contr_30_WT_liver_norm_v3), t(sig_contr_30_ALC_liver_norm_v3))) # 0.07878797
 
 # Cosine
-cos_dist_contr_WT_ALC_liver = 1 - cos_sim(as.vector(sig_contr_30_WT_liver_norm), as.vector(sig_contr_30_ALC_liver_norm)) # 0.01331735
+#v2
+cos_dist_contr_WT_ALC_liver_v2 = 1 - cos_sim(as.vector(sig_contr_30_WT_liver_norm_v2), as.vector(sig_contr_30_ALC_liver_norm_v2)) # 0.01331735
+#v3
+cos_dist_contr_WT_ALC_liver_v3 = 1 - cos_sim(as.vector(sig_contr_30_WT_liver_norm_v3), as.vector(sig_contr_30_ALC_liver_norm_v3)) # 0.01331735
 
 
 ```
@@ -306,31 +331,60 @@ cos_dist_contr_WT_ALC_liver = 1 - cos_sim(as.vector(sig_contr_30_WT_liver_norm),
 # ------ Generate bootstrap distributions -------
 
 # Euclidean
-# liver
-euc_dist_contr_WT_liver_perm = sig_contr_distance_permutations(mut_mat_WT_liver_rep,
-                                       signatures = cancer_signatures,
+# v2
+euc_dist_contr_WT_liver_perm_v2 = sig_contr_distance_permutations(mut_mat_WT_liver_rep,
+                                       signatures = cancer_signatures_v2,
                                        n_samples = 8,
                                        original_matrix = mut_mat_WT_liver,
                                        n_perm = 10000,
                                        dist_measure = "euclidean normalized")
 
-euc_dist_contr_ALC_liver_perm = sig_contr_distance_permutations(mut_mat_ALC_liver_rep,
-                                                         signatures = cancer_signatures,
+euc_dist_contr_ALC_liver_perm_v2 = sig_contr_distance_permutations(mut_mat_ALC_liver_rep,
+                                                         signatures = cancer_signatures_v2,
                                                          n_samples = 15,
                                                          original_matrix = mut_mat_ALC_liver,
                                                          n_perm = 10000,
                                                          dist_measure = "euclidean normalized")
+# v3
+euc_dist_contr_WT_liver_perm_v3 = sig_contr_distance_permutations(mut_mat_WT_liver_rep,
+                                       signatures = cancer_signatures_v3,
+                                       n_samples = 8,
+                                       original_matrix = mut_mat_WT_liver,
+                                       n_perm = 10000,
+                                       dist_measure = "euclidean normalized")
+
+euc_dist_contr_ALC_liver_perm_v3 = sig_contr_distance_permutations(mut_mat_ALC_liver_rep,
+                                                         signatures = cancer_signatures_v3,
+                                                         n_samples = 15,
+                                                         original_matrix = mut_mat_ALC_liver,
+                                                         n_perm = 10000,
+                                                         dist_measure = "euclidean normalized")
+
 # Cosine
-# liver
-cos_dist_contr_WT_liver_perm = sig_contr_distance_permutations(replicas_matrix = mut_mat_WT_liver_rep,
-                                                         signatures = cancer_signatures,
+# v2
+cos_dist_contr_WT_liver_perm_v2 = sig_contr_distance_permutations(replicas_matrix = mut_mat_WT_liver_rep,
+                                                         signatures = cancer_signatures_v2,
                                                          n_samples = 8,
                                                          original_matrix = mut_mat_WT_liver,
                                                          n_perm = 10000,
                                                          dist_measure = "cosine")
 
-cos_dist_contr_ALC_liver_perm = sig_contr_distance_permutations(replicas_matrix = mut_mat_ALC_liver_rep,
-                                                          signatures = cancer_signatures,
+cos_dist_contr_ALC_liver_perm_v2 = sig_contr_distance_permutations(replicas_matrix = mut_mat_ALC_liver_rep,
+                                                          signatures = cancer_signatures_v2,
+                                                          n_samples = 15,
+                                                          original_matrix = mut_mat_ALC_liver,
+                                                          n_perm = 10000,
+                                                          dist_measure = "cosine")
+# v3
+cos_dist_contr_WT_liver_perm_v3 = sig_contr_distance_permutations(replicas_matrix = mut_mat_WT_liver_rep,
+                                                         signatures = cancer_signatures_v3,
+                                                         n_samples = 8,
+                                                         original_matrix = mut_mat_WT_liver,
+                                                         n_perm = 10000,
+                                                         dist_measure = "cosine")
+
+cos_dist_contr_ALC_liver_perm_v3 = sig_contr_distance_permutations(replicas_matrix = mut_mat_ALC_liver_rep,
+                                                          signatures = cancer_signatures_v3,
                                                           n_samples = 15,
                                                           original_matrix = mut_mat_ALC_liver,
                                                           n_perm = 10000,
@@ -341,26 +395,46 @@ cos_dist_contr_ALC_liver_perm = sig_contr_distance_permutations(replicas_matrix 
 
 ```{r echo = F}
 
-p1 = plot_density2(euc_dist_contr_WT_liver_perm, euc_dist_contr_ALC_liver_perm, 
+p1 = plot_density2(euc_dist_contr_WT_liver_perm_v2, euc_dist_contr_ALC_liver_perm_v2, 
               "Bootstrap distributions liver", 
-              "Euclidean distance \n 30 signature contributions", 
-              line = as.vector(euc_dist_contr_WT_ALC_liver),
+              "Euclidean distance \n 30 signature contributions(v2)", 
+              line = as.vector(euc_dist_contr_WT_ALC_liver_v2),
               xlim = 0.4)
 
 p1
 
-p2 = plot_density2(cos_dist_contr_WT_liver_perm, cos_dist_contr_ALC_liver_perm, 
+p2 = plot_density2(cos_dist_contr_WT_liver_perm_v2, cos_dist_contr_ALC_liver_perm_v2, 
               "Bootstrap distributions liver", 
-              "Cosine distance \n 30 signature contributions", 
-              line = as.vector(cos_dist_contr_WT_ALC_liver),
+              "Cosine distance \n 30 signature contributions (v2)", 
+              line = as.vector(cos_dist_contr_WT_ALC_liver_v2),
               xlim = 0.4)
 
 p2
 
+p3 = plot_density2(euc_dist_contr_WT_liver_perm_v3, euc_dist_contr_ALC_liver_perm_v3, 
+              "Bootstrap distributions liver", 
+              "Euclidean distance \n 60 signature contributions (v3)", 
+              line = as.vector(euc_dist_contr_WT_ALC_liver_v3),
+              xlim = 0.4)
+
+p3
+
+p4 = plot_density2(cos_dist_contr_WT_liver_perm_v3, cos_dist_contr_ALC_liver_perm_v3, 
+              "Bootstrap distributions liver", 
+              "Cosine distance \n 60 signature contributions (v3)", 
+              line = as.vector(cos_dist_contr_WT_ALC_liver_v3),
+              xlim = 0.4)
+
+p4
 
 
-pdf(paste(outdir,"bootstrap_30_liver.pdf",sep=""), useDingbats = F, height = 4)
+
+pdf(paste(outdir,"bootstrap_30_liver_v2.pdf",sep=""), useDingbats = F, height = 4)
 p1
+dev.off()
+
+pdf(paste(outdir,"bootstrap_60_liver_v3.pdf",sep=""), useDingbats = F, height = 4)
+p3
 dev.off()
 
 

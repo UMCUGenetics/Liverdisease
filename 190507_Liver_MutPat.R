@@ -558,39 +558,69 @@ plot_compare_profiles(collapsed_combined_mutmatrix[,2],collapsed_combined_mutmat
 
 # ---- REFIT SPECTRA ----
 
-#1 Download signatures from pan-cancer study Alexandrov et al.
-cancer_signatures = read.table(paste(indir,"SNV/cancersignatures.txt",sep=""), sep="\t")
+#1 Load COSMIC mutational signatures
+#1A v2 (downloaded march 13th, 2018)
+cancer_signatures_v2 = read.table(paste(indir,"SNV/cancersignaturesv2.txt",sep=""), sep="\t")
+#1B v3 (downloaded may 22nd, 2019)
+cancer_signatures_v3 = read.csv(paste(indir,"SNV/cancersignaturesv3.csv",sep=""))
 
 #2 Reorder (to make the order of the trinucleotide changes the same)
-cancer_signatures <- cancer_signatures[order(cancer_signatures[,1]),]
+#v2
+cancer_signatures_v2 <- cancer_signatures_v2[order(cancer_signatures_v2[,1]),]
+#check: rownames(mut_matrix) == cancer_signatures_v2$Somatic.Mutation.Type
+#v3
+#check: rownames(mut_matrix) == paste(paste(substring(cancer_signatures_v3$SubType,1,1),cancer_signatures_v3$Type,sep="["),substring(cancer_signatures_v3$SubType,3,3),sep="]")
+#not necessary for the new ones
 
 #3 Only signatures in matrix
-cancer_signatures <- as.matrix(cancer_signatures[,4:33])
+cancer_signatures_v2 <- as.matrix(cancer_signatures_v2[,4:33])
+cancer_signatures_v3 <- as.matrix(cancer_signatures_v3[,3:ncol(cancer_signatures_v3)])
 
 #4 Refit
-fit_res = fit_to_signatures(mut_matrix[,-24], cancer_signatures)
-fit_res.withhcc = fit_to_signatures(mut_matrix, cancer_signatures)
-fit_res_collapsed <- fit_to_signatures(collapsed_combined_mutmatrix, cancer_signatures)
+#4A v2
+fit_res_v2 = fit_to_signatures(mut_matrix[,-24], cancer_signatures_v2)
+fit_res.withhcc_v2 = fit_to_signatures(mut_matrix, cancer_signatures_v2)
+fit_res_collapsed_v2 <- fit_to_signatures(collapsed_combined_mutmatrix, cancer_signatures_v2)
+#4B v3
+fit_res_v3 = fit_to_signatures(mut_matrix[,-24], cancer_signatures_v3)
+fit_res.withhcc_v3 = fit_to_signatures(mut_matrix, cancer_signatures_v3)
+fit_res_collapsed_v3 <- fit_to_signatures(collapsed_combined_mutmatrix, cancer_signatures_v3)
 
 #5 Select signatures with some contribution
-select = which(rowSums(fit_res$contribution) > 100)
-select.withhcc = which(rowSums(fit_res.withhcc$contribution) > 100)
-select_collapsed = which(rowSums(fit_res_collapsed$contribution) > 20)
+# v2
+select_v2 = which(rowSums(fit_res_v2$contribution) > 100)
+select.withhcc_v2 = which(rowSums(fit_res.withhcc_v2$contribution) > 100)
+select_collapsed_v2 = which(rowSums(fit_res_collapsed_v2$contribution) > 20)
+# v3
+select_v3 = which(rowSums(fit_res_v3$contribution) > 100)
+select.withhcc_v3 = which(rowSums(fit_res.withhcc_v3$contribution) > 100)
+select_collapsed_v3 = which(rowSums(fit_res_collapsed_v3$contribution) > 100)
 
 #6 Plot contribution
-rel.contribution.cosmic.plot <- plot_contribution(fit_res$contribution[select,], coord_flip = T, signatures = cancer_signatures, mode = "relative")
-abs.contribution.cosmic.plot <- plot_contribution(fit_res$contribution[select,], coord_flip = T, signatures = cancer_signatures, mode = "absolute")
-rel.contribution.cosmic.collapsed.plot <- plot_contribution(fit_res_collapsed$contribution[select_collapsed,], coord_flip = T, signatures = cancer_signatures, mode = "relative")
-abs.contribution.cosmic.collapsed.plot <- plot_contribution(fit_res_collapsed$contribution[select_collapsed,], coord_flip = T, signatures = cancer_signatures, mode = "absolute")
+# v2
+rel.contribution.cosmic.plot_v2 <- plot_contribution(fit_res_v2$contribution[select_v2,], coord_flip = T, signatures = cancer_signatures_v2, mode = "relative")
+abs.contribution.cosmic.plot_v2 <- plot_contribution(fit_res_v2$contribution[select_v2,], coord_flip = T, signatures = cancer_signatures_v2, mode = "absolute")
+rel.contribution.cosmic.collapsed.plot_v2 <- plot_contribution(fit_res_collapsed_v2$contribution[select_collapsed_v2,], coord_flip = T, signatures = cancer_signatures_v2, mode = "relative")
+abs.contribution.cosmic.collapsed.plot_v2 <- plot_contribution(fit_res_collapsed_v2$contribution[select_collapsed_v2,], coord_flip = T, signatures = cancer_signatures_v2, mode = "absolute")
+# v3
+rel.contribution.cosmic.plot_v3 <- plot_contribution(fit_res_v3$contribution[select_v3,], coord_flip = T, signatures = cancer_signatures_v3, mode = "relative")
+abs.contribution.cosmic.plot_v3 <- plot_contribution(fit_res_v3$contribution[select_v3,], coord_flip = T, signatures = cancer_signatures_v3, mode = "absolute")
+rel.contribution.cosmic.collapsed.plot_v3 <- plot_contribution(fit_res_collapsed_v3$contribution[select_collapsed_v3,], coord_flip = T, signatures = cancer_signatures_v3, mode = "relative")
+abs.contribution.cosmic.collapsed.plot_v3 <- plot_contribution(fit_res_collapsed_v3$contribution[select_collapsed_v3,], coord_flip = T, signatures = cancer_signatures_v3, mode = "absolute")
 
 #7 Save plots
-#ggsave(paste(outdir,"COSMIC_refit-absolute.pdf",sep=""), plot = abs.contribution.cosmic.plot, width = 10, height = 6)
-#ggsave(paste(outdir,"COSMIC_refit-relative.pdf",sep=""), plot = rel.contribution.cosmic.plot, width = 10, height = 6)
-#ggsave(paste(outdir,"COSMIC_refit-absolute_collapsed.pdf",sep=""), plot = abs.contribution.cosmic.collapsed.plot, width = 10, height = 6)
-#ggsave(paste(outdir,"COSMIC_refit-relative_collapsed.pdf",sep=""), plot = rel.contribution.cosmic.collapsed.plot, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-absolute_v2.pdf",sep=""), plot = abs.contribution.cosmic.plot_v2, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-relative_v2.pdf",sep=""), plot = rel.contribution.cosmic.plot_v2, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-absolute_collapsed_v2.pdf",sep=""), plot = abs.contribution.cosmic.collapsed.plot_v2, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-relative_collapsed_v2.pdf",sep=""), plot = rel.contribution.cosmic.collapsed.plot_v2, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-absolute_v3.pdf",sep=""), plot = abs.contribution.cosmic.plot_v3, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-relative_v3.pdf",sep=""), plot = rel.contribution.cosmic.plot_v3, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-absolute_collapsed_v3.pdf",sep=""), plot = abs.contribution.cosmic.collapsed.plot_v3, width = 10, height = 6)
+#ggsave(paste(outdir,"COSMIC_refit-relative_collapsed_v3.pdf",sep=""), plot = rel.contribution.cosmic.collapsed.plot_v3, width = 10, height = 6)
 
 #8 Cosine similarity reconstructed to original
-cos_sim_matrix(fit_res_collapsed$reconstructed,collapsed_combined_mutmatrix)
+cos_sim_matrix(fit_res_collapsed_v2$reconstructed,collapsed_combined_mutmatrix)
+cos_sim_matrix(fit_res_collapsed_v3$reconstructed,collapsed_combined_mutmatrix)
 
 
 
