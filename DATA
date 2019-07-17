@@ -1,2 +1,15 @@
 Filtered VCF-files, metadata, BED-files with callable regions, and RNA-Seq counts generated during the current study 
-are available at Zenodo under DOI 10.5281/zenodo.3295513 (https://doi.org/10.5281/zenodo.3295513).
+  are available at Zenodo under DOI 10.5281/zenodo.3295513 (https://doi.org/10.5281/zenodo.3295513).
+
+The whole-genome sequencing and RNA sequencing data generated during the current study are available at 
+  EGA (https://www.ebi.ac.uk/ega/home) under accession number EGAS00001002983. 
+
+
+Publicly available datasets:
+Variant call format (VCF) files and surveyed bed files of healthy liver ASCs were downloaded from 
+  https://wgs11.op.umcutrecht.nl/mutational_patterns_ASCs/.
+WGS data of previously published samples was obtained from EGA (https://www.ebi.ac.uk/ega/home) 
+  accession number EGAD00001001900.
+We downloaded 40 available H3K36me3 ChIP-Seq datasets from UCSC (https://genome.ucsc.edu/).
+A list of cosmic cancer genes was obtained from https://cancer.sanger.ac.uk/cosmic/census.
+Signatures v3 (and v2) were obtained from https://cancer.sanger.ac.uk/cosmic/signatures.
