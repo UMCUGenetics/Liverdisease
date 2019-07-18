@@ -1,26 +1,26 @@
-###Liver disease README
+#Liver disease README
 
-##Date
+#Date
 July 2019
 
-##Authors
+#Authors
 Myrthe Jager (contact: m.jager-2@umcutrecht.nl)
 Bastiaan van der Roest (contact: B.R.vanderRoest-2@umcutrecht.nl)
 
-##Coauthors
+#Coauthors
 Francis Blokzijl
 Roel Janssen
 Ruben van Boxtel
 
-##Description
+#Description
 Here, you can find all code that can be used to reproduce the results of "Mutational impact of chronic alcohol use on stem cells in cirrhotic liver" (https://doi.org/10.1101/698894).
 
-##Data
+#Data
 The whole-genome sequencing and RNA sequencing data generated during the current study are available at EGA (https://www.ebi.ac.uk/ega/home) under accession number EGAS00001002983. We also used data produced in Blokzijl et al., Nature 2016 (https://www.nature.com/articles/nature19768).
 Filtered VCF-files, metadata, BED-files with callable regions, and RNA-Seq counts generated during the current study are available at Zenodo under DOI 10.5281/zenodo.3295513 (https://doi.org/10.5281/zenodo.3295513). 
 
 
-##Instructions for use
+#Instructions for use
 #A Start up (estimated time < 1 hr)
 1. Download and install required packages (see below @ Software dependencies & R packages)
 2. Download the data from Zenodo (https://doi.org/10.5281/zenodo.3295513)
@@ -54,14 +54,14 @@ Filtered VCF-files, metadata, BED-files with callable regions, and RNA-Seq count
 16. Import H3K36me3 into your SPARQL graph database
 17. Run ‘count_overlaps.R’ to count SNVs in H3K36me3 peaks
 
-##Software dependencies
+#Software dependencies
 R version 3.5.1
 bedtools 2.27.1
 macs2 2.1.1.20160309
 graphdb-hpc-tools 0.0.2
 bigWigToBedGraph 377-1
 
-##R packages
+#R packages
 AnnotationDbi	1.44.0
 AnnotationHub	2.14.2
 Biobase	2.42.0
