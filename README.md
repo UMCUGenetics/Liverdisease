@@ -4,19 +4,19 @@
 July 2019 <br />
 
 ## Authors
-Myrthe Jager (contact: m.jager-2@umcutrecht.nl)
-Bastiaan van der Roest (contact: B.R.vanderRoest-2@umcutrecht.nl)
+Myrthe Jager (contact: m.jager-2@umcutrecht.nl) <br />
+Bastiaan van der Roest (contact: B.R.vanderRoest-2@umcutrecht.nl)<br />
 
 ## Coauthors
-Francis Blokzijl
-Roel Janssen
-Ruben van Boxtel
+Francis Blokzijl<br />
+Roel Janssen<br />
+Ruben van Boxtel<br />
 
 ## Description
 Here, you can find all code that can be used to reproduce the results of "Mutational impact of chronic alcohol use on stem cells in cirrhotic liver" (https://doi.org/10.1101/698894).
 
 ## Data
-The whole-genome sequencing and RNA sequencing data generated during the current study are available at EGA (https://www.ebi.ac.uk/ega/home) under accession number EGAS00001002983. We also used data produced in Blokzijl et al., Nature 2016 (https://www.nature.com/articles/nature19768).
+The whole-genome sequencing and RNA sequencing data generated during the current study are available at EGA (https://www.ebi.ac.uk/ega/home) under accession number EGAS00001002983. We also used data produced in Blokzijl et al., Nature 2016 (https://www.nature.com/articles/nature19768).<br />
 Filtered VCF-files, metadata, BED-files with callable regions, and RNA-Seq counts generated during the current study are available at Zenodo under DOI 10.5281/zenodo.3295513 (https://doi.org/10.5281/zenodo.3295513). 
 
 
