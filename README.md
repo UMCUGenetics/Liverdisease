@@ -44,8 +44,8 @@ Filtered VCF-files, metadata, BED-files with callable regions, and RNA-Seq count
 7. Run '190507_bootstrap.Rmd' to calculate whether there are significant differences between signature contributions in Healthy vs Alcoholic liver (~ 25 mins runtime)
 8. Run '190507_LiverdNdS.R' for dNdS and non synonymous mutations in known cancer-driver genes. (~ 15 mins runtime)
 9. Run '180420_HMFvsIAP.R' for a comparison between the two calling pipelines used in this study (~ 5 mins runtime)
--https://github.com/UMCUGenetics/IAP
--https://github.com/hartwigmedical
+- https://github.com/UMCUGenetics/IAP
+- https://github.com/hartwigmedical
 10. Run '180914_clonalVAF.R' to get & plot the TAF of the MRCA mutations in all HCC biopsies (~ 1 min runtime)
 11. Run '181009_Liver_INDEL.R' to get & plot INDEL numbers (~ 3 mins runtime)
 12. Run '190507_DE.R' for RNA seq analysis and expression analysis of PTPRK (~ 3 mins runtime)
@@ -59,11 +59,11 @@ Filtered VCF-files, metadata, BED-files with callable regions, and RNA-Seq count
 
 
 ## Software dependencies
-- R version 3.5.1
-- bedtools 2.27.1
-- macs2 2.1.1.20160309
-- graphdb-hpc-tools 0.0.2
-- bigWigToBedGraph 377-1
+R version 3.5.1<br />
+bedtools 2.27.1<br />
+macs2 2.1.1.20160309<br />
+graphdb-hpc-tools 0.0.2<br />
+bigWigToBedGraph 377-1<br />
 
 
 ## R packages
